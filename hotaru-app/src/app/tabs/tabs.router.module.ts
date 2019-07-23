@@ -42,8 +42,9 @@ const routes: Routes = [
     ]
   },
   {
+    // デフォルトではタブ２を表示
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/tab2',
     pathMatch: 'full'
   }
 ];
