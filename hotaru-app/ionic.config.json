@@ -1,5 +1,7 @@
 {
   "name": "hotaru-app",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

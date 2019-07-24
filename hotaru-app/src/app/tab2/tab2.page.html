@@ -7,13 +7,13 @@
 </ion-header>
 
 <ion-content>
-
+マップ
 <div id="mapId" style="width: 100%; height: 100%">
 </div>
 
 <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-  <ion-fab-button (click)="addMarker()">
-    <ion-icon name="pointer"></ion-icon>
+  <ion-fab-button (click)="mapService.addMarker()">
+    <ion-icon name="pin"></ion-icon>
   </ion-fab-button>
 </ion-fab>
 
