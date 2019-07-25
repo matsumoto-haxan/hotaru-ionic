@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Map, latLng, tileLayer, Layer, marker } from 'leaflet';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab2',
@@ -15,8 +16,10 @@ export class Tab2Page {
 
   map: Map;
   currentPosition: number[];
+  watch: any;
+  subscription: any;
 
-  constructor(public geolocation: Geolocation) {  }
+  constructor(public geolocation: Geolocation, public alertController: AlertController) {  }
 
   // 画面遷移してきた時に動作する
   ionViewDidEnter() {
@@ -26,17 +29,29 @@ export class Tab2Page {
     }).catch((error) => {
       console.log('Error getting location', error);
     });
+
+    // 位置情報を追跡して、変化があったら動作する
+    this.watch = this.geolocation.watchPosition();
+    this.subscription = this.watch.subscribe((data) => {
+      // data can be a set of coordinates, or an error (if an error occurred).
+      this.currentPosition = [data.coords.latitude, data.coords.longitude];
+      this.createMap(this.currentPosition);
+    });
   }
 
   // 初回DOM構築後に動作
-  OnInit() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      this.currentPosition = [resp.coords.latitude, resp.coords.longitude];
-      this.createMap(this.currentPosition);
-    }).catch((error) => {
-      console.log('Error getting location', error);
+  OnInit() {  }
+
+  async testAlert(mes: string) {
+    const alert = await this.alertController.create({
+      header: 'Alert',
+      subHeader: 'Subtitle',
+      message: mes,
+      buttons: ['OK']
     });
+    await alert.present();
   }
+
 
   createMap(geo: number[]) {
     // In setView add latLng and zoom
@@ -68,6 +83,7 @@ export class Tab2Page {
   }
 
   ionViewWillLeave() {
+    this.subscription.unsubscribe();
     this.map.remove();
   }
 
