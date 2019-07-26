@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Map, latLng, tileLayer, Layer, marker } from 'leaflet';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { GeoCrudService } from './../service/geo-crud.service';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-tab2',
@@ -9,7 +11,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 })
 export class Tab2Page {
 
-  constructor(public geolocation: Geolocation) { }
+  constructor(public geolocation: Geolocation, public geoClud: GeoCrudService) { }
 
   // メンバー
   map: Map;
@@ -63,6 +65,31 @@ export class Tab2Page {
   ionViewWillLeave() {
     this.subscription.unsubscribe();
     this.map.remove();
+  }
+
+  savegeo() {
+    alert(this.currentPosition);
+    this.CreateGeoRecord(firebase.auth().currentUser.uid, this.currentPosition);
+  }
+
+  getuid() {
+    alert(firebase.auth().currentUser.uid);
+  }
+
+  CreateGeoRecord(uid: string, geo: number[]) {
+    const record = {};
+    record['uid'] = uid;
+    record['latitude'] = geo[0];
+    record['longitude'] = geo[1];
+    this.geoClud.create_NewGeo(record).then(resp => {
+      // this.studentName = "";
+      // this.studentAge = undefined;
+      // this.studentAddress = "";
+      console.log(resp);
+    })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
 
