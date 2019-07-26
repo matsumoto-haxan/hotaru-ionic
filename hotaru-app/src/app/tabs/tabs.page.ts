@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { NavController } from '@ionic/angular';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-tabs',
@@ -7,6 +9,17 @@ import { Component } from '@angular/core';
 })
 export class TabsPage {
 
-  constructor() {}
+  constructor(public navCtrl: NavController) { }
+
+  OnInit() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        firebase.database().ref('chatrooms/').on('value', resp => {
+        });
+      } else {
+        this.navCtrl.navigateRoot('signin');
+      }
+    });
+  }
 
 }
