@@ -1,5 +1,7 @@
 {
   "name": "hotaru-ionic",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
