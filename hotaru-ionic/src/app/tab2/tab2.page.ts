@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { Map, latLng, tileLayer, Layer, marker } from 'leaflet';
+import { Component} from '@angular/core';
+import { Map, latLng, tileLayer, Layer, marker, icon } from 'leaflet';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+// import { Geolocation } from 'ionic-native';
 import { GeoCrudService } from './../service/geo-crud.service';
 import * as firebase from 'firebase';
 import { Timestamp } from 'rxjs';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, Platform } from '@ionic/angular';
+
 
 declare var GeoFire: any;
 
@@ -17,7 +19,8 @@ export class Tab2Page {
 
   constructor(public geolocation: Geolocation,
               public geoClud: GeoCrudService,
-              public navCtrl: NavController) { }
+              public navCtrl: NavController,
+              public platform: Platform) { }
 
   // メンバー
   map: Map;
@@ -31,41 +34,78 @@ export class Tab2Page {
   range = 0.0001; // 移動基準距離（20mくらい）
 
 
-  /**
-   * 初回DOM構築後に動作
-   */
-  onInit() {
-    // ユーザ認証してなければサインインページへ
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.navCtrl.navigateRoot('');
-      }
-    });
+  obtenerPosicion() {
+    this.geolocation.getCurrentPosition().then(resp => {
+      this.currentPosition = [resp.coords.latitude, resp.coords.longitude];
+      this.createMap(this.currentPosition);
+    })
+      .catch(error => {
+        console.log('obtenerPosicion():' + error.message);
+        alert('obtenerPosicion():' + error.message);
+      });
   }
 
   /**
    * 画面遷移してきた時に動作する
    */
   ionViewDidEnter() {
+
     // userIdがカラなら取得
-    if (!this.userId) {
+    if (firebase.auth().currentUser.uid) {
       this.userId = firebase.auth().currentUser.uid;
-      alert('ユーザーID：' + this.userId);
+      console.log('ユーザーID：' + this.userId);
+    } else {
+      console.log('サインインしていません');
+      this.navCtrl.navigateRoot('signin');
     }
 
-    this.geolocation.getCurrentPosition().then((resp) => {
+    // this.platform.ready().then(() => this.obtenerPosicion());
+
+    /*
+    const options = {
+      timeout: 3000
+    };
+    this.geolocation.getCurrentPosition(options).then((resp) => {
       this.currentPosition = [resp.coords.latitude, resp.coords.longitude];
       this.createMap(this.currentPosition);
     }).catch((error) => {
       console.log('Error getting location', error);
     });
+    */
+
+    // マップが用意されていなければ生成する（位置情報が手に入らないので、適当に日本標準時）
+    if (!this.map) {
+      if (!this.currentPosition) {
+        this.currentPosition = [35, 135];
+      }
+      this.map = new Map('mapId').setView(this.currentPosition, 17);
+      tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'OSM © CartoDB',
+      }).addTo(this.map);
+
+      // this.addMarker(geo);
+      const myIcon = icon({
+        iconUrl: 'assets/imgs/kurousa.png',
+        iconSize: [100, 100],
+        iconAnchor: [100, 100],
+        // popupAnchor: [-3, -76],
+        // shadowUrl: 'my-icon-shadow.png',
+        // shadowSize: [68, 95],
+        // shadowAnchor: [22, 94]
+      });
+
+      this.myMarker = marker(this.currentPosition, { icon: myIcon }).addTo(this.map)
+        // .bindPopup('ここにいる')
+        .openPopup();
+    }
 
     // 位置情報を追跡して、変化があったら動作する
     if (!this.watch) {
       this.watch = this.geolocation.watchPosition();
       this.subscription = this.watch.subscribe((data) => {
         this.currentPosition = [data.coords.latitude, data.coords.longitude];
-        alert('変化あり: ' + this.currentPosition);
+        // alert('変化あり: ' + this.currentPosition);
 
         const latlng = new latLng(this.currentPosition[0], this.currentPosition[1]);
         this.myMarker.setLatLng(latlng);
@@ -118,8 +158,8 @@ export class Tab2Page {
 
 /**
  * 自分の位置情報をクラウドに保存する
- * @param uid 
- * @param geo 
+ * @param uid string
+ * @param geo number[]
  */
   createGeoRecord(uid: string, geo: number[]) {
     const record = {};
@@ -133,7 +173,7 @@ export class Tab2Page {
 
       // 最終更新位置を保存
       this.lastUpdatePosition = geo;
-      alert('位置情報をクラウドに新規作成');
+      // alert('位置情報をクラウドに新規作成');
     })
       .catch(error => {
         console.log(error);
@@ -161,9 +201,9 @@ export class Tab2Page {
 
         // 最終更新位置を更新
         this.lastUpdatePosition = geo;
-        alert('位置情報をクラウド更新');
+        // alert('位置情報をクラウド更新');
       } else {
-        alert('近距離なのでクラウド更新しません');
+        // alert('近距離なのでクラウド更新しません');
       }
 
     } else {

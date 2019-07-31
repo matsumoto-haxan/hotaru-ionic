@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { NavController, AlertController } from '@ionic/angular';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-tab3',
@@ -7,6 +9,12 @@ import { Component } from '@angular/core';
 })
 export class Tab3Page {
 
-  constructor() {}
+  constructor(public navCtrl: NavController,
+              public alertController: AlertController) { }
+
+  signout() {
+    firebase.auth().signOut();
+    this.navCtrl.navigateRoot('signin');
+  }
 
 }

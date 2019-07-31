@@ -6,4 +6,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="signout()" color="primary">
+      <ion-icon name="ios-log-out"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
