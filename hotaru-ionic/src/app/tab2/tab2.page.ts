@@ -6,6 +6,9 @@ import { GeoCrudService } from './../service/geo-crud.service';
 import * as firebase from 'firebase';
 import { Timestamp } from 'rxjs';
 import { NavController, AlertController, Platform } from '@ionic/angular';
+import * as geofirex from 'geofirex';
+import { toGeoJSON } from 'geofirex';
+import { element } from '@angular/core/src/render3';
 
 
 declare var GeoFire: any;
@@ -15,12 +18,17 @@ declare var GeoFire: any;
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
+
+/**
+ * マップ画面クラス
+ */
 export class Tab2Page {
 
   constructor(public geolocation: Geolocation,
               public geoClud: GeoCrudService,
               public navCtrl: NavController,
-              public platform: Platform) { }
+              public platform: Platform,
+              ) { }
 
   // メンバー
   map: Map;
@@ -32,6 +40,50 @@ export class Tab2Page {
   myMarker: any;
   lastUpdatePosition: number[];
   range = 0.0001; // 移動基準距離（20mくらい）
+
+
+  setGeoRecord() {
+    const gfx = geofirex.init(firebase);
+  }
+
+  testGeoFire() {
+    this.addGeoFire([35, 135]);
+  }
+
+  addGeoFire(geo: number[]) {
+    const gfx = geofirex.init(firebase);
+    const ul = gfx.collection('Locations');
+    const point = gfx.point(geo[0], geo[1]);
+    ul.add({
+      uid: this.userId,
+      timestamp: new Date(),
+      position: point.data
+    }).then((elm) => {
+      this.currentRecordId = elm.id;
+    });
+  }
+
+  updateGeoFire(currentID: string, geo: number[]) {
+    const gfx = geofirex.init(firebase);
+    const ul = gfx.collection('Locations');
+    const point = gfx.point(geo[0], geo[1]);
+    ul.setPoint(currentID, 'position', geo[0], geo[1]);
+  }
+
+  testGetGeoFire() {
+    const gfx = geofirex.init(firebase);
+    const ul = gfx.collection('Locations');
+    const center = gfx.point(40.1, -119.1);
+    const radius = 100;
+    const field = 'position';
+    const query = ul.within(center, radius, field);
+
+    query.subscribe((data) => {
+      alert(
+        data[0].name
+      );
+    });
+  }
 
 
   obtenerPosicion() {
@@ -58,6 +110,8 @@ export class Tab2Page {
       console.log('サインインしていません');
       this.navCtrl.navigateRoot('signin');
     }
+
+    // GeoFirex用のDB参照を設定
 
     // this.platform.ready().then(() => this.obtenerPosicion());
 
@@ -227,11 +281,7 @@ export class Tab2Page {
     return year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
   }
 
-  testGeoFire() {
-    const firebaseRef = firebase.database().ref();
-    const geoFire = new GeoFire(firebaseRef);
-    geoFire.set('testkey', this.currentPosition);
-  }
+
 
 
 }
