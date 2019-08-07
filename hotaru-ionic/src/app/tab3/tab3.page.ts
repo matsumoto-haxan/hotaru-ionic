@@ -66,8 +66,6 @@ export class Tab3Page {
       });
       alert.present();
 
-      this.navCtrl.navigateRoot('');
-
     } catch (error) {
       const alert = await this.alertController.create({
         header: 'Oh… Sorry',
