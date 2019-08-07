@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
 import * as firebase from 'firebase';
+import { ProfileService } from './../service/profile.service';
 
 @Component({
   selector: 'app-signin',
@@ -11,8 +12,10 @@ export class SigninPage implements OnInit {
 
   data: { email: string, password: string } = { email: '', password: '' };
 
-  constructor(public navCtrl: NavController,
-              public alertController: AlertController) { }
+  constructor(
+    public navCtrl: NavController,
+    public alertController: AlertController,
+    public profileService: ProfileService) { }
 
 
   async signIn() {
@@ -44,7 +47,19 @@ export class SigninPage implements OnInit {
     try {
       await firebase
         .auth()
-        .createUserWithEmailAndPassword(this.data.email, this.data.password);
+        .createUserWithEmailAndPassword(this.data.email, this.data.password).then(
+          (resp) => {
+            // 新規登録したらプロフィールテーブルにカラのデータを挿入
+            const json = {
+              uid: resp.user.uid,
+              name: '',
+              nickname: '',
+              profile: 'よろしくね',
+              sex: ''
+            };
+            this.profileService.createProfile(json);
+          });
+
       const alert = await this.alertController.create({
         header: '登録しました',
         message: 'ようこそ',

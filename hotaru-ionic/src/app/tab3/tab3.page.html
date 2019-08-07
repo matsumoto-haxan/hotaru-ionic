@@ -8,6 +8,41 @@
 
 <ion-content>
 
+  <ion-list>
+  
+    <ion-item>
+      <ion-label stacked>Name</ion-label>
+      <ion-input type="text" name="myname" [(ngModel)]="data.myname" required></ion-input>
+    </ion-item>
+  
+    <ion-item>
+      <ion-label stacked>NickName</ion-label>
+      <ion-input type="text" name="nickname" [(ngModel)]="data.nickname" required></ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label stacked>Profile</ion-label>
+      <ion-input type="text" name="nickname" [(ngModel)]="data.profile" required></ion-input>
+    </ion-item>
+
+    <!--
+    <ion-item>
+      <ion-label>Sex</ion-label>
+      <ion-select [(ngModel)]="data.sex">
+        <ion-option value="0">Other</ion-option>
+        <ion-option value="1">Male</ion-option>
+        <ion-option value="2">Female</ion-option>
+      </ion-select>
+    </ion-item>
+    -->
+
+  </ion-list>
+
+  <p>
+    <ion-button expand="block" color="primary" type="button" (click)="update()">Update</ion-button>
+  </p>
+
+  <!-- ボタン類 -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="signout()" color="primary">
       <ion-icon name="ios-log-out"></ion-icon>
