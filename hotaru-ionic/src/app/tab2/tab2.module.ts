@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Tab2Page } from './tab2.page';
 import { TweetmodalComponent } from './tweetmodal/tweetmodal.component';
+import { ProfilemodalComponent } from './profilemodal/profilemodal.component';
 
 @NgModule({
   imports: [
@@ -15,10 +16,12 @@ import { TweetmodalComponent } from './tweetmodal/tweetmodal.component';
   ],
   declarations: [
     Tab2Page,
-    TweetmodalComponent
+    TweetmodalComponent,
+    ProfilemodalComponent
   ],
   entryComponents: [
-    TweetmodalComponent
+    TweetmodalComponent,
+    ProfilemodalComponent
   ]
 })
 export class Tab2PageModule {}

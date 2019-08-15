@@ -1,0 +1,21 @@
+<form>
+  <ion-list>
+      <ion-item>
+        <ion-label stacked>Name</ion-label>
+        <ion-input type="text" name="myname" [(ngModel)]="data.myname" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label stacked>NickName</ion-label>
+        <ion-input type="text" name="nickname" [(ngModel)]="data.nickname" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label stacked>Profile</ion-label>
+        <ion-input type="text" name="nickname" [(ngModel)]="data.profile" required></ion-input>
+      </ion-item>
+  </ion-list>
+  <p>
+    <ion-button expand="block" color="primary" type="button" (click)="signIn()">Signal</ion-button>
+  </p>
+</form>

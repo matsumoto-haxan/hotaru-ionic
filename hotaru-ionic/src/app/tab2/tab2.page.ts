@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 import { NavController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as geofirex from 'geofirex';
 import { TweetmodalComponent } from './tweetmodal/tweetmodal.component';
+import { ProfilemodalComponent } from './profilemodal/profilemodal.component';
 
 declare var GeoFire: any;
 
@@ -231,13 +232,13 @@ export class Tab2Page {
     newMarker
       .setLatLng(latLng(elmGeo[0], elmGeo[1]))
       .bindPopup(
-        '<p>uid:' + elm.uid + '</p>' +
-        '<p>timestamp:' + elm.timestamp + '</p>' +
-        '<p>tweet:' + elm.tweet + '</p>'
-     );
+        '<p>tweet:' + elm.tweet + '</p>')
+      .isOpen()
+      .on('singleclick', func => { alert('test'); });
     newMarker.addTo(this.map);
 
     // ポップアップウインドウ
+    /*
     const popOption = {
       minWidth: 100,
       autoPanPaddingTopLeft: [10, 10]
@@ -246,9 +247,9 @@ export class Tab2Page {
     newPopup
       .setLatLng(latLng(elmGeo[0], elmGeo[1]))
       .setContent(
-        '<p>uid:' + elm.uid + '</p>' +
         '<p>tweet:' + elm.tweet + '</p>')
       .isOpen();
+      */
   }
 
   testGetNear() {
@@ -269,6 +270,22 @@ export class Tab2Page {
     modal.onDidDismiss().then((res) => {
       this.mytweet = res.data;
       this.updateGeoRecord(firebase.auth().currentUser.uid, this.currentPosition);
+    });
+    return await modal.present();
+  }
+
+  /**
+   * プロフィールモーダルを表示する
+   */
+  async showProfileModal(userObj: any) {
+    const modal = await this.modalController.create({
+      component: ProfilemodalComponent,
+      componentProps: {user: userObj}
+    });
+
+    modal.onDidDismiss().then((res) => {
+      // this.mytweet = res.data;
+      // this.updateGeoRecord(firebase.auth().currentUser.uid, this.currentPosition);
     });
     return await modal.present();
   }

@@ -12,8 +12,8 @@ import { ProfileService } from './../service/profile.service';
 
 export class Tab3Page {
 
-  data: { myname: string, nickname: string, profile: string, sex: number } =
-    { myname: '', nickname: '', profile: '', sex: 0 };
+  data: { myname: string, nickname: string, profile: string, sex: string } =
+    { myname: '', nickname: '', profile: '', sex: '' };
 
 
   constructor(
