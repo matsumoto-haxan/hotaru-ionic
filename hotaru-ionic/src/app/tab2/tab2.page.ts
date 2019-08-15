@@ -39,7 +39,7 @@ export class Tab2Page {
   myMarker: any;
   lastUpdatePosition = [0, 0];
   range = 0.0001; // 移動基準距離（20mくらい）
-  mytweet: string;
+  mytweet = '';
 
 /**
  * ◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾ 使うメソッド ◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾
@@ -73,8 +73,10 @@ export class Tab2Page {
       // 自分のアイコンを作成
       const myIcon = icon({
         iconUrl: 'assets/imgs/kurousa.png',
-        iconSize: [100, 100],
-        iconAnchor: [50, 100],
+        iconSize: [50, 50],
+        iconAnchor: [25, 50],
+        opacity: 0.3,
+        zIndexOffset: 0,
         // popupAnchor: [-3, -76],
         // shadowUrl: 'my-icon-shadow.png',
         // shadowSize: [68, 95],
@@ -181,22 +183,26 @@ export class Tab2Page {
    * 近くのユーザ情報を取得する
    */
   getNearUser(centerGeo: number[], radius: number) {
+    const myid = firebase.auth().currentUser.uid;
     const dt = new Date();
     const startDate = dt.setMinutes(dt.getMinutes() - 30).toString();
     const field = 'position';
     const gfx = geofirex.init(firebase);
     // TODO: 範囲検索に他の条件を追加する方法がよくわからないです
     // 時間で範囲指定したい・userIDで自分を除外したい
-    const ul = gfx.collection('Locations', ref => {
-      return ref.where('timestamp', '>=', '0').orderBy('timestamp');
-    });
-    // const ul = gfx.collection('Locations');
+    // const ul = gfx.collection(
+    //   'Locations',
+    //   ref =>
+    //     ref.where('timestamp', '>', 0).orderBy('position.geohash').orderBy('timestamp'));
+    const ul = gfx.collection('Locations');
     const center = gfx.point(centerGeo[0], centerGeo[1]);
     const query = ul.within(center, radius, field);
     query.subscribe((data) => {
       data.forEach(elm => {
-        console.log('検索にかかったユーザID：' + elm.uid);
-        if (elm.uid !== firebase.auth().currentUser.uid) {
+        if (
+          // あまりここで条件分岐をさせたくないけどやむなしか
+          elm.uid != myid
+          && elm.timestamp > startDate) {
           this.setMarker(elm);
         }
       });
@@ -210,12 +216,12 @@ export class Tab2Page {
 
     // マーカー
     const uIcon = icon({
-      iconUrl: '',
+      iconUrl: 'assets/imgs/umaru.png',
       iconSize: [10, 10],
       iconAnchor: [10, 10],
-      shadowUrl: '',
-      shadowSize: [0, 0],
-      shadowAnchor: [0, 0]
+      // shadowUrl: '',
+      // shadowSize: [0, 0],
+      // shadowAnchor: [0, 0]
 
     });
     const mkOption = {
@@ -241,7 +247,7 @@ export class Tab2Page {
       .setLatLng(latLng(elmGeo[0], elmGeo[1]))
       .setContent(
         '<p>uid:' + elm.uid + '</p>' +
-        '<p>timestamp:' + elm.timestamp + '</p>')
+        '<p>tweet:' + elm.tweet + '</p>')
       .isOpen();
   }
 
@@ -251,6 +257,9 @@ export class Tab2Page {
 
   }
 
+  /**
+   * ツイートモーダルを表示する
+   */
   async showTweetModal() {
     const modal = await this.modalController.create({
       component: TweetmodalComponent,
