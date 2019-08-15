@@ -1,15 +1,11 @@
-import { Component} from '@angular/core';
+import { Component, OnInit, NgModule, } from '@angular/core';
 import { Map, latLng, tileLayer, Layer, marker, icon, popup } from 'leaflet';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-// import { Geolocation } from 'ionic-native';
 import { GeoCrudService } from './../service/geo-crud.service';
 import * as firebase from 'firebase';
-import { Timestamp } from 'rxjs';
-import { NavController, AlertController, Platform } from '@ionic/angular';
+import { NavController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as geofirex from 'geofirex';
-import { toGeoJSON } from 'geofirex';
-import { element } from '@angular/core/src/render3';
-
+import { TweetmodalComponent } from './tweetmodal/tweetmodal.component';
 
 declare var GeoFire: any;
 
@@ -24,11 +20,14 @@ declare var GeoFire: any;
  */
 export class Tab2Page {
 
-  constructor(public geolocation: Geolocation,
-              public geoClud: GeoCrudService,
-              public navCtrl: NavController,
-              public platform: Platform,
-              ) { }
+
+  constructor(
+    public geolocation: Geolocation,
+    public geoClud: GeoCrudService,
+    public navCtrl: NavController,
+    public platform: Platform,
+    public modalController: ModalController
+    ) { }
 
   // メンバー
   map: Map;
@@ -36,10 +35,11 @@ export class Tab2Page {
   watch: any;
   subscription: any;
   currentRecordId: string;
-  userId: string;
+  // userId: string;
   myMarker: any;
   lastUpdatePosition: number[];
   range = 0.0001; // 移動基準距離（20mくらい）
+  mytweet: string;
 
 /**
  * ◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾ 使うメソッド ◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾
@@ -51,9 +51,9 @@ export class Tab2Page {
   ionViewDidEnter() {
 
     // userIdがカラなら取得
-    if (firebase.auth().currentUser.uid) {
-      this.userId = firebase.auth().currentUser.uid;
-      console.log('ユーザーID：' + this.userId);
+    if (firebase.auth().currentUser.uid != null) {
+      // this.userId = firebase.auth().currentUser.uid;
+      // console.log('ユーザーID：' + this.userId);
     } else {
       console.log('サインインしていません');
       this.navCtrl.navigateRoot('signin');
@@ -82,6 +82,8 @@ export class Tab2Page {
       });
 
       this.myMarker = marker(this.currentPosition, { icon: myIcon }).addTo(this.map);
+
+      this.getNearUser(this.currentPosition, 100);
     }
 
     if (!this.watch) {
@@ -103,7 +105,7 @@ export class Tab2Page {
       this.map.panTo(latlng, panopt);
       this.myMarker.setLatLng(latlng);
 
-      this.updateGeoRecord(this.currentRecordId, this.currentPosition);
+      this.setGeoRecord(this.currentPosition);
     });
   }
 
@@ -118,7 +120,8 @@ export class Tab2Page {
     ul.add({
       uid: userid,
       timestamp: Date.parse(new Date().toString()),
-      position: point.data
+      position: point.data,
+      tweet: ''
     }).then((elm) => {
       // 自分のレコードIDをローカル保存
       this.currentRecordId = elm.id;
@@ -133,27 +136,33 @@ export class Tab2Page {
    * @param geo number[]
    */
   updateGeoRecord(currentId: string, geo: number[]) {
-    if (currentId) {
-      // 既にレコードがある場合
 
+    const gfx = geofirex.init(firebase);
+    const ul = gfx.collection('Locations');
+    const point = gfx.point(geo[0], geo[1]);
+
+    ul.setDoc(currentId, {
+      timestamp: Date.parse(new Date().toString()),
+      position: point.data,
+      uid: firebase.auth().currentUser.uid,
+      tweet: this.mytweet
+    });
+
+    // 最終更新位置を更新
+    this.lastUpdatePosition = geo;
+  }
+
+  setGeoRecord(geo: number[]) {
+
+    if (this.currentRecordId) {
+      // ロケーションIDを保持している場合
+      // 動いていれば更新
       if (this.isMoved(geo, this.lastUpdatePosition)) {
-        const gfx = geofirex.init(firebase);
-        const ul = gfx.collection('Locations');
-        const point = gfx.point(geo[0], geo[1]);
-        // ul.setPoint(currentID, 'position', geo[0], geo[1]);
-        ul.setDoc(currentId, {
-          timestamp: Date.parse(new Date().toString()),
-          position: point.data
-        });
-
-        // 最終更新位置を更新
-        this.lastUpdatePosition = geo;
-      } else {
+        this.updateGeoRecord(this.currentRecordId, geo);
       }
-
     } else {
-      // レコードがなければ新規作成
-      this.createGeoRecord(this.userId, geo);
+      // ロケーションIDがないなら新規作成
+      this.createGeoRecord(firebase.auth().currentUser.uid, geo);
     }
   }
 
@@ -184,7 +193,7 @@ export class Tab2Page {
   testGetGeoFire() {
     const gfx = geofirex.init(firebase);
     const ul = gfx.collection('Locations');
-    const center = gfx.point(35.6658834, 139.7656723,);
+    const center = gfx.point(35.6658834, 139.7656723);
     const radius = 100;
     const field = 'position';
     const query = ul.within(center, radius, field);
@@ -205,15 +214,17 @@ export class Tab2Page {
     const field = 'position';
     const gfx = geofirex.init(firebase);
     // TODO: 範囲検索に他の条件を追加する方法がよくわからないです
-    // const ul = gfx.collection('Locations', ref => {
-    //   return ref.where('timestamp', '>=', '0');
-    // });
-    const ul = gfx.collection('Locations');
+    // 時間で範囲指定したい・userIDで自分を除外したい
+    const ul = gfx.collection('Locations', ref => {
+      return ref.where('timestamp', '>=', '0').orderBy('timestamp');
+    });
+    // const ul = gfx.collection('Locations');
     const center = gfx.point(centerGeo[0], centerGeo[1]);
     const query = ul.within(center, radius, field);
     query.subscribe((data) => {
       data.forEach(elm => {
-        if (elm.uid !== this.userId) {
+        console.log('検索にかかったユーザID：' + elm.uid);
+        if (elm.uid !== firebase.auth().currentUser.uid) {
           this.setMarker(elm);
         }
       });
@@ -242,8 +253,9 @@ export class Tab2Page {
     newMarker
       .setLatLng(latLng(elmGeo[0], elmGeo[1]))
       .bindPopup(
-      '<p>uid:' + elm.uid + '</p>' +
-      '<p>timestamp:' + elm.timestamp + '</p>'
+        '<p>uid:' + elm.uid + '</p>' +
+        '<p>timestamp:' + elm.timestamp + '</p>' +
+        '<p>tweet:' + elm.tweet + '</p>'
      );
     newMarker.addTo(this.map);
 
@@ -257,14 +269,28 @@ export class Tab2Page {
       .setLatLng(latLng(elmGeo[0], elmGeo[1]))
       .setContent(
         '<p>uid:' + elm.uid + '</p>' +
-        '<p>timestamp:' + elm.timestamp + '</p>'
-      );
+        '<p>timestamp:' + elm.timestamp + '</p>')
+      .isOpen();
   }
 
   testGetNear() {
     this.getNearUser(this.currentPosition, 100);
     // this.testGetGeoFire();
 
+  }
+
+  async showTweetModal() {
+    const modal = await this.modalController.create({
+      component: TweetmodalComponent,
+      componentProps: { value: this.currentRecordId }
+    });
+
+    modal.onDidDismiss().then((res) => {
+      alert(this.currentRecordId);
+      this.mytweet = res.data;
+      this.updateGeoRecord(this.currentRecordId, this.currentPosition);
+    });
+    return await modal.present();
   }
 
 

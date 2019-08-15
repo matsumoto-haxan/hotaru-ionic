@@ -9,7 +9,7 @@ const routes: Routes = [
   // 各画面の名前の定義
   { path: '', loadChildren: './tabs/tabs.module#TabsPageModule' },
   { path: 'signin', loadChildren: './signin/signin.module#SigninPageModule' },
-  { path: 'room', loadChildren: './room/room.module#RoomPageModule' }
+  { path: 'room', loadChildren: './room/room.module#RoomPageModule' },
 ];
 @NgModule({
   imports: [

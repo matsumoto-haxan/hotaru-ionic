@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { RoomPage } from './room.page';
+import { ModalUploadComponent } from './modal-upload/modal-upload.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,12 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [RoomPage]
+  declarations: [
+    RoomPage,
+    ModalUploadComponent
+  ],
+  entryComponents: [
+    ModalUploadComponent
+  ]
 })
 export class RoomPageModule {}

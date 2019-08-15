@@ -3,6 +3,7 @@ import { NavController, AlertController } from '@ionic/angular';
 import * as firebase from 'firebase';
 import { ProfileService } from './../service/profile.service';
 
+
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -18,7 +19,7 @@ export class Tab3Page {
   constructor(
     public navCtrl: NavController,
     public alertController: AlertController,
-    public profileService: ProfileService,
+    public profileService: ProfileService
   ) { }
 
 
@@ -27,14 +28,9 @@ export class Tab3Page {
   　* 画面遷移してきた時に動作する
  　 */
   ionViewDidEnter() {
-    try {
-      alert(firebase.auth().currentUser.uid);
-    } catch{
-      
-    }
 
     // クラウドのデータを取得
-    const qss = this.profileService.getProfile('AwVFagRFlnOI3h2azD7d6fjYhX83');
+    const qss = this.profileService.getProfile(firebase.auth().currentUser.uid);
     qss.forEach(elm => {
       const prof = elm.docs[0].data();
       this.data.myname = prof.name;
@@ -50,6 +46,8 @@ export class Tab3Page {
    */
   async update() {
     try {
+
+      console.log('ログイン中ユーザ：' + firebase.auth().currentUser.uid);
 
       const json = {
         uid: firebase.auth().currentUser.uid,

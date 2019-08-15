@@ -9,19 +9,19 @@ export class GeoCrudService {
   constructor(private firestore: AngularFirestore) { }
 
   create_NewGeo(record) {
-    return this.firestore.collection('Userlocations').add(record);
+    return this.firestore.collection('Locations').add(record);
   }
 
   read_Geo() {
-    return this.firestore.collection('Userlocations').snapshotChanges();
+    return this.firestore.collection('Locations').snapshotChanges();
   }
 
   update_Geo(recordID, record) {
-    this.firestore.doc('Userlocations/' + recordID).set(record);
+    this.firestore.doc('Locations/' + recordID).set(record);
   }
 
   delete_Geo(recordId: string) {
-    this.firestore.doc('Userlocations/' + recordId).delete();
+    this.firestore.doc('Locations/' + recordId).delete();
   }
 
 }

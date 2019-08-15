@@ -75,3 +75,10 @@
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 }
+
+/** 追加 **/
+.modal-wrapper {
+  --width: 80vw;
+  --height: 60vh;
+  --border-radius: 10px;
+}
