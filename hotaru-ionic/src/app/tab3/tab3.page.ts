@@ -47,8 +47,6 @@ export class Tab3Page {
   async update() {
     try {
 
-      console.log('ログイン中ユーザ：' + firebase.auth().currentUser.uid);
-
       const json = {
         uid: firebase.auth().currentUser.uid,
         name: this.data.myname,

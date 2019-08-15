@@ -34,10 +34,10 @@ export class Tab2Page {
   currentPosition: number[];
   watch: any;
   subscription: any;
-  currentRecordId: string;
+  // currentRecordId: string;
   // userId: string;
   myMarker: any;
-  lastUpdatePosition: number[];
+  lastUpdatePosition = [0, 0];
   range = 0.0001; // 移動基準距離（20mくらい）
   mytweet: string;
 
@@ -110,59 +110,31 @@ export class Tab2Page {
   }
 
   /**
-   * 自分の位置情報をクラウドに保存する
-   * @param geo number[]
-   */
-  createGeoRecord(userid: string, geo: number[]) {
-    const gfx = geofirex.init(firebase);
-    const ul = gfx.collection('Locations');
-    const point = gfx.point(geo[0], geo[1]);
-    ul.add({
-      uid: userid,
-      timestamp: Date.parse(new Date().toString()),
-      position: point.data,
-      tweet: ''
-    }).then((elm) => {
-      // 自分のレコードIDをローカル保存
-      this.currentRecordId = elm.id;
-      // 最終更新位置を保存
-      this.lastUpdatePosition = geo;
-    });
-  }
-
-  /**
    * 自分の位置情報をクラウドに更新する
-   * @param currentId string
+   * @param userId string
    * @param geo number[]
    */
-  updateGeoRecord(currentId: string, geo: number[]) {
+  updateGeoRecord(userId: string, geo: number[]) {
 
     const gfx = geofirex.init(firebase);
     const ul = gfx.collection('Locations');
     const point = gfx.point(geo[0], geo[1]);
-
-    ul.setDoc(currentId, {
+    const json = {
       timestamp: Date.parse(new Date().toString()),
       position: point.data,
       uid: firebase.auth().currentUser.uid,
       tweet: this.mytweet
-    });
+    };
+    ul.setDoc(userId, json);
 
     // 最終更新位置を更新
     this.lastUpdatePosition = geo;
   }
 
   setGeoRecord(geo: number[]) {
-
-    if (this.currentRecordId) {
-      // ロケーションIDを保持している場合
-      // 動いていれば更新
-      if (this.isMoved(geo, this.lastUpdatePosition)) {
-        this.updateGeoRecord(this.currentRecordId, geo);
-      }
-    } else {
-      // ロケーションIDがないなら新規作成
-      this.createGeoRecord(firebase.auth().currentUser.uid, geo);
+    // 動いていれば更新
+    if (this.isMoved(geo, this.lastUpdatePosition)) {
+      this.updateGeoRecord(firebase.auth().currentUser.uid, geo);
     }
   }
 
@@ -282,13 +254,12 @@ export class Tab2Page {
   async showTweetModal() {
     const modal = await this.modalController.create({
       component: TweetmodalComponent,
-      componentProps: { value: this.currentRecordId }
+      componentProps: {  }
     });
 
     modal.onDidDismiss().then((res) => {
-      alert(this.currentRecordId);
       this.mytweet = res.data;
-      this.updateGeoRecord(this.currentRecordId, this.currentPosition);
+      this.updateGeoRecord(firebase.auth().currentUser.uid, this.currentPosition);
     });
     return await modal.present();
   }
