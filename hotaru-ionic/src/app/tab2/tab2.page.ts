@@ -8,6 +8,7 @@ import * as geofirex from 'geofirex';
 import { TweetmodalComponent } from './tweetmodal/tweetmodal.component';
 import { ProfilemodalComponent } from './profilemodal/profilemodal.component';
 
+
 declare var GeoFire: any;
 
 @Component({
@@ -20,7 +21,6 @@ declare var GeoFire: any;
  * マップ画面クラス
  */
 export class Tab2Page {
-
 
   constructor(
     public geolocation: Geolocation,
@@ -60,15 +60,16 @@ export class Tab2Page {
       this.navCtrl.navigateRoot('signin');
     }
 
-    // マップが用意されていなければ生成する（位置情報が手に入らない場合、適当に新宿駅）
+    // マップが用意されていなければ生成する（位置情報が手に入らない場合、適当に築地市場駅）
     if (!this.map) {
       if (!this.currentPosition) {
-        this.currentPosition = [35.6940631, 139.7099038];
+        this.currentPosition = [35.6654651, 139.7653611];
       }
       this.map = new Map('mapId').setView(this.currentPosition, 17);
       tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: 'OSM © CartoDB',
+        closePopupOnClick: false
       }).addTo(this.map);
 
       // 自分のアイコンを作成
@@ -165,21 +166,6 @@ export class Tab2Page {
  * ◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾ テスト用のメソッド ◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾◾
  */
 
-  testGetGeoFire() {
-    const gfx = geofirex.init(firebase);
-    const ul = gfx.collection('Locations');
-    const center = gfx.point(35.6658834, 139.7656723);
-    const radius = 100;
-    const field = 'position';
-    const query = ul.within(center, radius, field);
-
-    query.subscribe((data) => {
-      alert(
-        data[0].uid
-      );
-    });
-  }
-
   /**
    * 近くのユーザ情報を取得する
    */
@@ -200,13 +186,26 @@ export class Tab2Page {
     const query = ul.within(center, radius, field);
     query.subscribe((data) => {
       data.forEach(elm => {
+
+        /*
+        // 本番はこっち
         if (
           // あまりここで条件分岐をさせたくないけどやむなしか
           elm.uid != myid
           && elm.timestamp > startDate) {
           this.setMarker(elm);
         }
+        */
+
+        // 時間によるフィルタリング無しバージョン
+        if (
+          // あまりここで条件分岐をさせたくないけどやむなしか
+          elm.uid != myid) {
+          this.setMarker(elm);
+        }
+
       });
+
 
     });
   }
@@ -215,6 +214,29 @@ export class Tab2Page {
 
     const elmGeo = [elm.position.geopoint.latitude, elm.position.geopoint.longitude];
 
+    const uIcon = icon({
+      iconUrl: 'assets/imgs/umaru.png',
+      iconSize: [50, 50],
+      iconAnchor: [25, 50],
+      opacity: 0.3,
+      zIndexOffset: 0,
+      popupAnchor: [0, -55],
+      closeButton: false,
+      // shadowUrl: 'my-icon-shadow.png',
+      // shadowSize: [68, 95],
+      // shadowAnchor: [22, 94]
+    });
+
+    const uMarker = marker(elmGeo, { icon: uIcon }).addTo(this.map);
+    uMarker
+      .on('click', func => {
+        this.showProfileModal(firebase.auth().currentUser.uid, elm.uid);
+      })
+      .bindPopup(
+        '<p>' + elm.tweet + '</p>')
+      .openPopup();
+
+    /*
     // マーカー
     const uIcon = icon({
       iconUrl: 'assets/imgs/umaru.png',
@@ -233,9 +255,10 @@ export class Tab2Page {
       .setLatLng(latLng(elmGeo[0], elmGeo[1]))
       .bindPopup(
         '<p>tweet:' + elm.tweet + '</p>')
-      .isOpen()
-      .on('singleclick', func => { alert('test'); });
+      .on('click', func => { alert('test'); });
     newMarker.addTo(this.map);
+    */
+
 
     // ポップアップウインドウ
     /*
@@ -277,10 +300,15 @@ export class Tab2Page {
   /**
    * プロフィールモーダルを表示する
    */
-  async showProfileModal(userObj: any) {
+  async showProfileModal(uid: string, tid: string) {
+
     const modal = await this.modalController.create({
       component: ProfilemodalComponent,
-      componentProps: {user: userObj}
+      componentProps: {
+        myid: uid,
+        targetid: tid,
+        // glowobj: this.showGlowModal(uid, tid)
+      }
     });
 
     modal.onDidDismiss().then((res) => {

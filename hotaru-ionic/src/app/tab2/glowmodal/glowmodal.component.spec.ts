@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UsermodalComponent } from './usermodal.component';
+import { GlowmodalComponent } from './glowmodal.component';
 
-describe('UsermodalComponent', () => {
-  let component: UsermodalComponent;
-  let fixture: ComponentFixture<UsermodalComponent>;
+describe('GlowmodalComponent', () => {
+  let component: GlowmodalComponent;
+  let fixture: ComponentFixture<GlowmodalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UsermodalComponent ],
+      declarations: [ GlowmodalComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UsermodalComponent);
+    fixture = TestBed.createComponent(GlowmodalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

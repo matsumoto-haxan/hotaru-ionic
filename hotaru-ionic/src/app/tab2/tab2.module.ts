@@ -6,6 +6,9 @@ import { FormsModule } from '@angular/forms';
 import { Tab2Page } from './tab2.page';
 import { TweetmodalComponent } from './tweetmodal/tweetmodal.component';
 import { ProfilemodalComponent } from './profilemodal/profilemodal.component';
+import { GlowmodalComponent } from './glowmodal/glowmodal.component';
+import { ScanmodalComponent } from './scanmodal/scanmodal.component';
+import { QrmodalComponent } from './qrmodal/qrmodal.component';
 
 @NgModule({
   imports: [
@@ -17,11 +20,17 @@ import { ProfilemodalComponent } from './profilemodal/profilemodal.component';
   declarations: [
     Tab2Page,
     TweetmodalComponent,
-    ProfilemodalComponent
+    ProfilemodalComponent,
+    GlowmodalComponent,
+    ScanmodalComponent,
+    QrmodalComponent
   ],
   entryComponents: [
     TweetmodalComponent,
-    ProfilemodalComponent
+    ProfilemodalComponent,
+    GlowmodalComponent,
+    ScanmodalComponent,
+    QrmodalComponent
   ]
 })
 export class Tab2PageModule {}

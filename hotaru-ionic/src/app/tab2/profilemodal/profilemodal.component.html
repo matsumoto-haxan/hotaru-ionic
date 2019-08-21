@@ -2,7 +2,7 @@
   <ion-list>
       <ion-item>
         <ion-label stacked>Name</ion-label>
-        <ion-input type="text" name="myname" [(ngModel)]="data.myname" required></ion-input>
+        <ion-input type="text" name="name" [(ngModel)]="data.name" required></ion-input>
       </ion-item>
       
       <ion-item>
@@ -12,10 +12,16 @@
       
       <ion-item>
         <ion-label stacked>Profile</ion-label>
-        <ion-input type="text" name="nickname" [(ngModel)]="data.profile" required></ion-input>
+        <ion-input type="text" name="profile" [(ngModel)]="data.profile" required></ion-input>
       </ion-item>
   </ion-list>
   <p>
     <ion-button expand="block" color="primary" type="button" (click)="signIn()">Signal</ion-button>
+  </p>
+  <p>
+    <ion-button expand="block" color="primary" type="button" (click)="showGlowModal()">Glow</ion-button>
+  </p>
+  <p>
+    <ion-button expand="block" color="primary" type="button" (click)="showScanModal()">Touch</ion-button>
   </p>
 </form>
