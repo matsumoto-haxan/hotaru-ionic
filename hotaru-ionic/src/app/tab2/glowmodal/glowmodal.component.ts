@@ -21,24 +21,17 @@ export class GlowmodalComponent implements OnInit {
   ngOnInit() {
     const uid = this.navParams.data.uid;
     const tid = this.navParams.data.tid;
-    let newFlg = false;
+
 
     const dss = this.glowService.getGlow(uid, tid);
-    /*
+
     dss.forEach(elm => {
-      if (!elm.data) {
-        newFlg = true;
+      if (elm.data()) {
+        this.colorcode = elm.data().colorcode;
       } else {
-        alert(elm.data().colorcode);
-        // this.colorcode = elm.data().colorcode;
+        this.colorcode = this.glowService.createGlow(uid, tid);
       }
     });
-
-    if (newFlg) {
-      this.colorcode = this.glowService.createGlow(uid, tid);
-    }
-    */
-    this.colorcode = this.glowService.createGlow(uid, tid);
 
   }
 

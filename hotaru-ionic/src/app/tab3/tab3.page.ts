@@ -30,13 +30,15 @@ export class Tab3Page {
   ionViewDidEnter() {
 
     // クラウドのデータを取得
-    const qss = this.profileService.getProfile(firebase.auth().currentUser.uid);
-    qss.forEach(elm => {
-      const prof = elm.docs[0].data();
-      this.data.myname = prof.name;
-      this.data.nickname = prof.nickname;
-      this.data.profile = prof.profile;
-      this.data.sex = prof.sex;
+    this.profileService.getProfile(firebase.auth().currentUser.uid)
+      .then(qss => {
+        qss.forEach(elm => {
+          const prof = elm.docs[0].data();
+          this.data.myname = prof.name;
+          this.data.nickname = prof.nickname;
+          this.data.profile = prof.profile;
+          this.data.sex = prof.sex;
+        });
     });
 
   }
@@ -61,6 +63,9 @@ export class Tab3Page {
         buttons: ['OK']
       });
       alert.present();
+
+      // ローカルに保存してある自分のプロフィールを更新
+      ProfileService.myLocalProfile = json;
 
     } catch (error) {
       const alert = await this.alertController.create({

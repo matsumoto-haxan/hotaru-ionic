@@ -307,7 +307,6 @@ export class Tab2Page {
       componentProps: {
         myid: uid,
         targetid: tid,
-        // glowobj: this.showGlowModal(uid, tid)
       }
     });
 

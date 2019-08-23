@@ -1,9 +1,5 @@
 <form>
   <ion-list>
-      <ion-item>
-        <ion-label stacked>Name</ion-label>
-        <ion-input type="text" name="name" [(ngModel)]="data.name" required></ion-input>
-      </ion-item>
       
       <ion-item>
         <ion-label stacked>NickName</ion-label>
@@ -13,6 +9,11 @@
       <ion-item>
         <ion-label stacked>Profile</ion-label>
         <ion-input type="text" name="profile" [(ngModel)]="data.profile" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label stacked>Sex</ion-label>
+        <ion-input type="text" name="sex" [(ngModel)]="data.sex" required></ion-input>
       </ion-item>
   </ion-list>
   <p>

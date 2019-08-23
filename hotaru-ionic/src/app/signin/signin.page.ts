@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
 import * as firebase from 'firebase';
 import { ProfileService } from './../service/profile.service';
+import { GatheringService } from './../service/gathering.service';
 
 @Component({
   selector: 'app-signin',
@@ -15,7 +16,8 @@ export class SigninPage implements OnInit {
   constructor(
     public navCtrl: NavController,
     public alertController: AlertController,
-    public profileService: ProfileService) { }
+    public profileService: ProfileService,
+    public gatheringService: GatheringService) { }
 
 
   async signIn() {
@@ -30,6 +32,12 @@ export class SigninPage implements OnInit {
         buttons: ['OK']
       });
       alert.present();
+
+      // プロフィールを取得してクラス変数に保存
+      await this.profileService.loadProfile(firebase.auth().currentUser.uid);
+
+      // ギャザリングリストを取得してクラス変数に保存
+      await this.gatheringService.loadGatherdList(firebase.auth().currentUser.uid);
 
       this.navCtrl.navigateRoot('');
 
@@ -58,6 +66,7 @@ export class SigninPage implements OnInit {
               sex: ''
             };
             this.profileService.createProfile(json);
+            ProfileService.myLocalProfile = json;
           });
 
       const alert = await this.alertController.create({

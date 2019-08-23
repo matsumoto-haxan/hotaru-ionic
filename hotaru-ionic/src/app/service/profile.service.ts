@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { database } from 'firebase';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
+
+  public static myLocalProfile: any;
 
   constructor(private firestore: AngularFirestore) { }
 
@@ -21,9 +24,31 @@ export class ProfileService {
     // return this.firestore.collection('profiles').snapshotChanges();
   }
 
-  getProfile(userid: string) {
+  async getProfile(userid: string) {
+    // const qss = await this.firestore.collection('/profiles', ref => ref.where('uid', '==', userid)).get();
+    // ProfileService.myLocalProfile
     return this.firestore.collection('/profiles', ref => ref.where('uid', '==', userid)).get();
   }
+
+  /**
+   * 自分のプロフィールをロードして、ローカルに保存する
+   * @param userid 自分のユーザID
+   */
+  async loadProfile(userid: string) {
+    this.firestore.collection('/profiles', ref => ref.where('uid', '==', userid))
+      .get().forEach(elm => {
+          const data = elm.docs[0].data();
+          const json = {
+            uid: data.uid,
+            name: data.name,
+            nickname: data.nickname,
+            profile: data.profile,
+            sex: data.sex
+          };
+          ProfileService.myLocalProfile = json;
+        });
+      }
+
 
   updateProfile(recordID, record) {
     this.firestore.doc('profiles/' + recordID).set(record);

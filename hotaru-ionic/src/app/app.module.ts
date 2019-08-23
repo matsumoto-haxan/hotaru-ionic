@@ -16,6 +16,10 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { environment } from '../environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
+// QRコードスキャナー
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { FormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -25,12 +29,14 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.config),
     AngularFirestoreModule,
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    FormsModule
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Geolocation,
+    BarcodeScanner,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
