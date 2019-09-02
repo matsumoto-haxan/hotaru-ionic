@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "949313939284",
+    "firebase_url": "https://hotaru-247104.firebaseio.com",
+    "project_id": "hotaru-247104",
+    "storage_bucket": "hotaru-247104.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949313939284:android:764d2cb7da3280eb",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "949313939284-4au6r77sf416thkh7j451lk631q980ia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXsB9YUXGvpIJYgaIQH0j69rDuA5IhQFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "949313939284-4au6r77sf416thkh7j451lk631q980ia.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "949313939284-h1cflunlf3grkfuo5qn7ma7e2p654ept.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.ionic.starter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
