@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Firebase } from '@ionic-native/firebase/ngx';
+import * as firebase from 'firebase';
+import { NavController, AlertController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
 
 @Component({
@@ -10,38 +12,39 @@ import { Platform } from '@ionic/angular';
 export class HomePage {
 
   constructor(
+    public navCtrl: NavController,
     public platform: Platform,
-    private firebase: Firebase
+    private fbnotice: Firebase
   ) {
 
-    platform.ready().then(() => { 
+    platform.ready().then(() => {
       if (platform.is('cordova')) {
-        alert('isCordova');
-        firebase.getToken()
+
+        fbnotice.getToken()
           .then(token => this.registerToken(token))
           .catch(error => alert('Error getting token: ' + error));
 
-        alert('getToken end');
-
-        firebase.hasPermission().then(data => {
-          alert('in hasPermission()');
+        fbnotice.hasPermission().then(data => {
           if (data.isEnabled !== true) {
-
-            firebase.grantPermission().then(res => {
+            fbnotice.grantPermission().then(res => {
               // 通知を許可する
               console.log(res.body);
-              alert(res.body);
             });
           }
         });
 
-        firebase.onNotificationOpen().subscribe(data => {
-          console.log(data.body);
+        fbnotice.onNotificationOpen().subscribe(data => {
           this.showAlert(data.body);
         });
       }
     });
 
+
+    if (firebase.auth().currentUser === null) {
+      this.navCtrl.navigateRoot('signin');
+    } else {
+      this.navCtrl.navigateRoot('tabs');
+    }
   }
 
   private registerToken(token: string) {

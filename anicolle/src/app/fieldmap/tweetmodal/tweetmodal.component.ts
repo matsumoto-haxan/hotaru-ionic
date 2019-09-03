@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { NavParams, ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tweetmodal',
@@ -7,8 +8,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TweetmodalComponent implements OnInit {
 
-  constructor() { }
+  data: { mytweet: string } = { mytweet: '' };
+  @Input() value: string;
 
-  ngOnInit() {}
+  constructor(
+    public navParams: NavParams,
+    public modalCtrl: ModalController
+  ) {
+  }
+
+  ngOnInit() { }
+
+  async sendTweet() {
+    const param = {
+      tweet: this.data.mytweet
+    };
+    this.modalCtrl.dismiss(this.data.mytweet);
+  }
+
 
 }

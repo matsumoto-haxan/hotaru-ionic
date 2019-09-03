@@ -18,6 +18,9 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { environment } from '../environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
+// 位置情報
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -33,6 +36,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     StatusBar,
     SplashScreen,
     Firebase,
+    Geolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

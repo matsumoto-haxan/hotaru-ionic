@@ -14,6 +14,21 @@ export class SigninPage implements OnInit {
 
   data: { email: string, password: string } = { email: '', password: '' };
 
+  animals = [
+    ['assets/imgs/animal/bee.svg', 'はち'],
+    ['assets/imgs/animal/chick.svg', 'ひよこ'],
+    ['assets/imgs/animal/cock.svg', 'にわとり'],
+    ['assets/imgs/animal/dog.svg', 'いぬ'],
+    ['assets/imgs/animal/elephant.svg', 'ぞう'],
+    ['assets/imgs/animal/horse.svg', 'うま'],
+    ['assets/imgs/animal/lion.svg', 'らいおん'],
+    ['assets/imgs/animal/monkey.svg', 'さる'],
+    ['assets/imgs/animal/ounce.svg', 'ひょう'],
+    ['assets/imgs/animal/rat.svg', 'ねずみ'],
+    ['assets/imgs/animal/wolf.svg', 'おおかみ'],
+    ['assets/imgs/animal/zebra.svg', 'しまうま'],
+  ];
+
   constructor(
     public navCtrl: NavController,
     public alertController: AlertController,
@@ -48,8 +63,7 @@ export class SigninPage implements OnInit {
       // TODO: ギャザリングリストを取得してクラス変数に保存
       // await this.gatheringService.loadGatherdList(firebase.auth().currentUser.uid);
 
-      // TODO: マイページに飛ばして個人情報を入力させる
-      this.navCtrl.navigateRoot('');
+      this.navCtrl.navigateRoot('/tabs');
 
     } catch (error) {
       const alert = await this.alertController.create({
@@ -66,32 +80,40 @@ export class SigninPage implements OnInit {
    */
   async signUp() {
     try {
+
+      // TODO: メール確認させるフローを追加すること！
       await firebase
         .auth()
         .createUserWithEmailAndPassword(this.data.email, this.data.password).then(
           (resp) => {
+
+            const animalNo = Math.floor(Math.random() * 1000 % 12);
+
             // 新規登録したらプロフィールテーブルにカラのデータを挿入
             const json = {
               uid: resp.user.uid,
               name: '',
               nickname: '',
               profile: 'よろしくね',
-              sex: ''
+              sex: '',
+              birthday: '',
+              animal: this.animals[animalNo][1],
+              iconurl: this.animals[animalNo][0]
             };
 
             // プロファイルレコードを作成
-            this.profileService.createProfile(json);
+            this.profileService.updateProfile(resp.user.uid, json);
             ProfileService.myLocalProfile = json;
           });
 
       const alert = await this.alertController.create({
-        header: '登録しました',
-        message: 'ようこそ',
+        header: 'さあはじめましょう！',
+        message: 'まずはあなたの情報を登録してください。',
         buttons: ['OK']
       });
       alert.present();
 
-      this.navCtrl.navigateRoot('');
+      this.navCtrl.navigateRoot('/tabs/tabs/mypage');
 
     } catch (error) {
       const alert = await this.alertController.create({
@@ -102,4 +124,5 @@ export class SigninPage implements OnInit {
       alert.present();
     }
   }
+
 }

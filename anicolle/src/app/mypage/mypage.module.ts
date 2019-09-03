@@ -7,10 +7,12 @@ import { IonicModule } from '@ionic/angular';
 
 import { MypagePage } from './mypage.page';
 
+import { DatePicker } from '@ionic-native/date-picker/ngx';
+
 const routes: Routes = [
   {
     path: '',
-    component: MypagePage
+    component: MypagePage,
   }
 ];
 
@@ -21,6 +23,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [MypagePage]
+  declarations: [MypagePage],
+  providers:[DatePicker]
 })
 export class MypagePageModule {}

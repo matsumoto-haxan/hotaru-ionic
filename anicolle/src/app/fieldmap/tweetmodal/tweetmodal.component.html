@@ -1,3 +1,10 @@
 <p>
-  tweetmodal works!
+  Monologue<ion-icon name="text"></ion-icon>
 </p>
+<ion-item>
+  <ion-input type="text" name="mytweet" placeholder="How are you?" [(ngModel)]="data.mytweet" required></ion-input>
+</ion-item>
+
+<ion-button expand="block" color="primary" type="button" (click)="sendTweet()">
+  Tweet
+</ion-button>

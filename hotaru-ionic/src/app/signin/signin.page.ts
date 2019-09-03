@@ -63,7 +63,8 @@ export class SigninPage implements OnInit {
               name: '',
               nickname: '',
               profile: 'よろしくね',
-              sex: ''
+              sex: '',
+              animal: ''
             };
             this.profileService.createProfile(json);
             ProfileService.myLocalProfile = json;

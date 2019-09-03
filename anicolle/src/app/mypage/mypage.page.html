@@ -1,9 +1,74 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>設定</ion-title>
+    <ion-title>
+      設定
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
+  <ion-card class="welcome-card">
+    <ion-card-header>
+      <ion-card-title>{{data.animal}}チーム</ion-card-title>
+    </ion-card-header>
+    <img src={{data.iconurl}} alt="" />
+    <ion-card-header>
+      <ion-card-subtitle>{{data.nickname}}</ion-card-subtitle>
+      <ion-card-title>{{data.myname}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{data.profile}}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <form>
+    <ion-list>
+      <ion-list-header>
+        <ion-label>編集する</ion-label>
+      </ion-list-header>
+
+      <ion-item>
+        <ion-label position="floating">氏名（非公開）</ion-label>
+        <ion-input type="text" name="myname" [(ngModel)]="data.myname" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">ニックネーム</ion-label>
+        <ion-input type="text" name="nickname" [(ngModel)]="data.nickname" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">プロフィール</ion-label>
+        <ion-input type="text" name="profile" [(ngModel)]="data.profile" required></ion-input>
+      </ion-item>
+
+
+      <ion-item>
+        <ion-label position="floating">性別</ion-label>
+        <ion-select [(ngModel)]="data.sex" name="data.sex">
+          <ion-select-option value="女">女</ion-select-option>
+          <ion-select-option value="男">男</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+
+      <ion-item>
+        <ion-label position="floating">誕生日</ion-label>
+        <ion-input type="text" name="birthday" [(ngModel)]="data.birthday" required (click)="showCalendar()" value="{{data.birthday}}"></ion-input>
+      </ion-item>
+
+
+    </ion-list>
+
+    <p>
+      <ion-button expand="block" color="primary" type="button" (click)="update()">Update</ion-button>
+    </p>
+  </form>
+  <!-- ボタン類 -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="signout()" color="primary">
+      <ion-icon name="ios-log-out"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

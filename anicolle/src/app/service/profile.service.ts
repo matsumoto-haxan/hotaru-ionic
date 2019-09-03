@@ -45,7 +45,9 @@ export class ProfileService {
           nickname: data.nickname,
           profile: data.profile,
           sex: data.sex,
-          birthday: data.birthday
+          birthday: data.birthday,
+          animal: data.animal,
+          iconurl: data.iconurl
         };
         ProfileService.myLocalProfile = json;
       });
