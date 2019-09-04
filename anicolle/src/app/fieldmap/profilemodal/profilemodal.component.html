@@ -1,3 +1,38 @@
-<p>
-  profilemodal works!
-</p>
+
+  <ion-card class="welcome-card">
+    <ion-card-header>
+      <ion-card-title>{{data.animal}}チーム</ion-card-title>
+    </ion-card-header>
+    <img src={{data.iconurl}} alt="" />
+    <ion-card-header>
+      <ion-card-subtitle>
+        <ion-icon name="ribbon"></ion-icon>{{data.birthday}}
+      </ion-card-subtitle>
+
+      <ion-card-subtitle>
+        <span *ngIf="data.sex == '女'">
+          <ion-icon name="female"></ion-icon>
+        </span>
+        <span *ngIf="data.sex == '男'">
+          <ion-icon name="male"></ion-icon>
+        </span>
+      </ion-card-subtitle>
+      <ion-card-title>{{data.nickname}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{data.profile}}</p>
+    </ion-card-content>
+  </ion-card>
+
+<form>
+
+  <p>
+    <ion-button expand="block" color="primary" type="button" (click)="signIn()">Signal</ion-button>
+  </p>
+  <p>
+    <ion-button expand="block" color="primary" type="button" (click)="showGlowModal()">Glow</ion-button>
+  </p>
+  <p>
+    <ion-button expand="block" color="primary" type="button" (click)="showScanModal()">Touch</ion-button>
+  </p>
+</form>

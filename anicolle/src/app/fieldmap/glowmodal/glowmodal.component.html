@@ -1,3 +1,15 @@
-<p>
-  glowmodal works!
-</p>
+<ion-card class="welcome-card glowcard" [ngStyle]="bgStyle">
+  <ion-card-header>
+    <ion-card-subtitle>同じ色の人を探してみよう</ion-card-subtitle>
+  </ion-card-header>
+  
+  <ion-card-content>
+    <img src="assets/imgs/phone_shake.png" class="support_icon">
+  </ion-card-content>
+</ion-card>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="closeModal()" color="light">
+    <ion-icon name="return-left"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

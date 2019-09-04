@@ -75,3 +75,57 @@
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 }
+
+.glowcard{
+  height: 100%;
+}
+
+.glow_pastel_fire{
+  background-color: #ff7f7f;
+}
+.glow_pastel_opera{
+  background-color: #ff7fff;
+}
+.glow_pastel_violet{
+  background-color: #bf7fff;
+}
+.glow_pastel_royal{
+  background-color: #7f7fff;
+}
+.glow_pastel_celestial{
+  background-color: #7fbfff;
+}
+.glow_pastel_aqua{
+  background-color: #7fffff;
+}
+.glow_pastel_lime{
+  background-color: #7fff7f;
+}
+.glow_pastel_grass{
+  background-color: #bfff7f;
+}
+.glow_pastel_yellow{
+  background-color: #ffff7f;
+}
+.glow_pastel_orange{
+  background-color: #ffbf7f;
+}
+
+
+.support_icon {
+	height: 0px;
+	animation: fadeout 2s linear 0s 1;
+}
+@keyframes fadeout {
+	0% {
+    height: 100%;
+		opacity :0.3;
+	}
+	70%{
+    height: 100%;
+		opacity :0.3;
+	}
+	100% {
+		opacity:0;
+	}
+}
