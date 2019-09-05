@@ -105,15 +105,18 @@ export class MypagePage {
     }
   }
 
+  /**
+   * ログアウトしてログインページに遷移
+   */
   signout() {
     firebase.auth().signOut();
     this.navCtrl.navigateRoot('signin');
   }
 
+  /**
+   * カレンダーを表示
+   */
   async showCalendar() {
-
-    
-    // if (platform.is('cordova')) {
       this.datePicker.show({
         date: new Date('2000/1/1 0:0'),
         minDate: new Date('1960/1/1 0:0'),
@@ -126,10 +129,12 @@ export class MypagePage {
           this.fbBirthday = new Date(inputdate);
         }
       );
-    // }
-    
   }
 
+  /**
+   * 表示用の日付文字列を生成
+   * @param inputdate Date
+   */
   generateViewDate(inputdate: Date) {
     const year = inputdate.getUTCFullYear();
     const month = inputdate.getMonth() + 1;

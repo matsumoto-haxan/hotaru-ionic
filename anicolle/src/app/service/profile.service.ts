@@ -62,6 +62,18 @@ export class ProfileService {
     this.firestore.doc('profiles/' + recordId).delete();
   }
 
+  /**
+   * メッセージングのトークンを更新する
+   * @param userId string ユーザID
+   * @param token string FCMトークン
+   */
+  updateFcmToken(userId: string, token: string) {
+    const record = {
+      fcmtoken: token
+    };
+    this.firestore.doc('profiles/' + userId).set(record);
+  }
+
 
 
 

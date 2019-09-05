@@ -3,6 +3,9 @@ import { Firebase } from '@ionic-native/firebase/ngx';
 import * as firebase from 'firebase';
 import { NavController, AlertController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
+import { MessagingService } from './../service/messaging.service';
+import { ProfileService } from './../service/profile.service';
+
 
 @Component({
   selector: 'app-home',
@@ -14,46 +17,32 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     public platform: Platform,
-    private fbnotice: Firebase
+    private fbnotice: Firebase,
+    private messagingService: MessagingService,
+    public profileService: ProfileService,
   ) {
 
-    platform.ready().then(() => {
-      if (platform.is('cordova')) {
-
-        fbnotice.getToken()
-          .then(token => this.registerToken(token))
-          .catch(error => alert('Error getting token: ' + error));
-
-        fbnotice.hasPermission().then(data => {
-          if (data.isEnabled !== true) {
-            fbnotice.grantPermission().then(res => {
-              // 通知を許可する
-              console.log(res.body);
-            });
-          }
-        });
-
-        fbnotice.onNotificationOpen().subscribe(data => {
-          this.showAlert(data.body);
-        });
-      }
-    });
-
+    // FCM設定
+    messagingService.generateToken();
 
     if (firebase.auth().currentUser === null) {
+      // 未ログインの時
+      // ルーティング
       this.navCtrl.navigateRoot('signin');
+
     } else {
+      // ログイン済みの時
+
+      // メッセージングトークンをアップデートする
+      messagingService.updateFcmToken(
+        firebase.auth().currentUser.uid,
+        MessagingService.fcmRegistrationToken
+      );
+
+      // ルーティング
       this.navCtrl.navigateRoot('tabs');
     }
   }
 
-  private registerToken(token: string) {
-    alert('token: ' + token);
-    // tokenが取得できれば表示
-  }
 
-  private showAlert(message: string) {
-    alert('message: ' + message);
-    // tokenが取得できれば表示
-  }
 }

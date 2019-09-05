@@ -5,6 +5,7 @@ import { GlowmodalComponent } from './../glowmodal/glowmodal.component';
 import { ScanmodalComponent } from './../scanmodal/scanmodal.component';
 import { QrmodalComponent } from './../qrmodal/qrmodal.component';
 // import { GatheringService } from 'src/app/service/gathering.service';
+import { MessagingService } from './../../service/messaging.service';
 
 @Component({
   selector: 'app-profilemodal',
@@ -23,8 +24,10 @@ export class ProfilemodalComponent implements OnInit {
 
   constructor(
     public navParams: NavParams,
+    public alertController: AlertController,
     public profileService: ProfileService,
-    public modalController: ModalController
+    public modalController: ModalController,
+    public messagingService: MessagingService,
   ) { }
 
   ngOnInit() {
@@ -118,19 +121,36 @@ export class ProfilemodalComponent implements OnInit {
       });
       return await modal.present();
     }
-
-  }
-
-
-  async sendSignal() {
   }
 
   /**
-   * 将来要件か
+   * シグナルを送信する
+   */
+  async sendSignal() {
+    const fromid = this.navParams.data.myid;
+    const toid = this.targetProfile.uid;
+    this.messagingService.createMessageRecord(fromid, toid);
+
+    const alert = await this.alertController.create({
+      header: 'シグナルを送信しました',
+      message: 'シグナルが帰ってきたら、グローで合図してみましょう',
+      buttons: ['OK']
+    });
+    alert.present();
+
+  }
+
+  /**
+   * ブロックする
+   * TODO: 将来要件か
    */
   async block() {
   }
 
+  /**
+   * 表示用の日付文字列を生成する
+   * @param inputdate Date
+   */
   generateViewDate(inputdate: Date) {
     const year = inputdate.getUTCFullYear();
     const month = inputdate.getMonth() + 1;
@@ -138,5 +158,4 @@ export class ProfilemodalComponent implements OnInit {
     const strDate = year + '年' + month + '月' + day + '日';
     return strDate;
   }
-
 }

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
 import * as firebase from 'firebase';
 import { ProfileService } from './../service/profile.service';
+import { MessagingService } from '../service/messaging.service';
 
 @Component({
   selector: 'app-signin',
@@ -33,6 +34,7 @@ export class SigninPage implements OnInit {
     public navCtrl: NavController,
     public alertController: AlertController,
     public profileService: ProfileService,
+    public messagingService: MessagingService
   ) { }
 
   /**
@@ -63,6 +65,13 @@ export class SigninPage implements OnInit {
       // TODO: ギャザリングリストを取得してクラス変数に保存
       // await this.gatheringService.loadGatherdList(firebase.auth().currentUser.uid);
 
+      // メッセージングトークンをアップデートする
+      this.messagingService.updateFcmToken(
+        firebase.auth().currentUser.uid,
+        MessagingService.fcmRegistrationToken
+      );
+
+      // ルーティング
       this.navCtrl.navigateRoot('/tabs');
 
     } catch (error) {
@@ -89,14 +98,14 @@ export class SigninPage implements OnInit {
 
             const animalNo = Math.floor(Math.random() * 1000 % 12);
 
-            // 新規登録したらプロフィールテーブルにカラのデータを挿入
+            // 新規登録したらプロフィールテーブルにデフォルトのデータを挿入
             const json = {
               uid: resp.user.uid,
               name: '',
               nickname: '',
               profile: 'よろしくね',
               sex: '',
-              birthday: '',
+              birthday: new Date(),
               animal: this.animals[animalNo][1],
               iconurl: this.animals[animalNo][0]
             };
@@ -104,6 +113,13 @@ export class SigninPage implements OnInit {
             // プロファイルレコードを作成
             this.profileService.updateProfile(resp.user.uid, json);
             ProfileService.myLocalProfile = json;
+
+            // メッセージングトークンをアップデートする
+            this.messagingService.updateFcmToken(
+              resp.user.uid,
+              MessagingService.fcmRegistrationToken
+            );
+
           });
 
       const alert = await this.alertController.create({
@@ -112,6 +128,8 @@ export class SigninPage implements OnInit {
         buttons: ['OK']
       });
       alert.present();
+
+
 
       this.navCtrl.navigateRoot('/tabs/tabs/mypage');
 

@@ -50,6 +50,7 @@ export class FieldmapPage {
     }
 
     // マップが用意されていなければ生成する（位置情報が手に入らない場合、適当に築地市場駅）
+    // TODO: 前回の位置情報を保存しておいて、そこからスタートにしたい。もしくはロードしてから表示か。
     if (!this.map) {
       if (!this.currentPosition) {
         this.currentPosition = [35.6654651, 139.7653611];
